@@ -1,0 +1,11 @@
+{
+  "name": "gemini-markdown-studio",
+  "compatibility_date": "2024-09-23",
+  "assets": {
+    "directory": "dist/gemini-markdown-studio/browser",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
