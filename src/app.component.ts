@@ -48,6 +48,9 @@ const greet = () => {
   isProcessing = signal<boolean>(false);
   aiMode = signal<'grammar' | 'expand' | 'summarize' | null>(null);
   showAiMenu = signal<boolean>(false);
+  
+  // Mobile UI State
+  activeMobileTab = signal<'editor' | 'preview'>('editor');
 
   // Computed
   sanitizedHtml = computed(() => {
@@ -116,6 +119,10 @@ const greet = () => {
     this.showAiMenu.update(v => !v);
   }
 
+  setActiveMobileTab(tab: 'editor' | 'preview') {
+    this.activeMobileTab.set(tab);
+  }
+
   async runAiEnhancement(mode: 'grammar' | 'expand' | 'summarize') {
     this.showAiMenu.set(false);
     this.isProcessing.set(true);
@@ -126,6 +133,11 @@ const greet = () => {
 
       const enhancedText = await this.aiService.enhanceMarkdown(currentText, mode);
       this.rawMarkdown.set(enhancedText);
+      
+      // On mobile, switch to preview after enhancement to show results
+      if (window.innerWidth < 768) {
+        this.activeMobileTab.set('preview');
+      }
     } catch (err) {
       alert('Failed to process with AI. Please check your API key and quota.');
     } finally {
@@ -142,6 +154,10 @@ const greet = () => {
      try {
          const generated = await this.aiService.generateFromTopic(topic);
          this.rawMarkdown.set(generated);
+         // Switch to preview to show the result
+         if (window.innerWidth < 768) {
+            this.activeMobileTab.set('preview');
+         }
      } catch (e) {
          alert("Generation failed.");
      } finally {

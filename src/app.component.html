@@ -6,7 +6,8 @@
       <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
         <span class="text-white font-bold text-lg">M</span>
       </div>
-      <h1 class="text-lg font-semibold tracking-wide text-slate-100">Gemini Markdown Studio</h1>
+      <h1 class="text-lg font-semibold tracking-wide text-slate-100 hidden sm:block">Gemini Markdown Studio</h1>
+      <h1 class="text-lg font-semibold tracking-wide text-slate-100 sm:hidden">Studio</h1>
     </div>
 
     <div class="flex items-center gap-2">
@@ -20,7 +21,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span>Thinking...</span>
+            <span class="hidden sm:inline">Thinking...</span>
           } @else {
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5c3.31 0 6 2.69 6 6" /></svg>
             <span>AI Assist</span>
@@ -55,62 +56,102 @@
     </div>
   </header>
 
-  <!-- Toolbar -->
-  <div class="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-hide">
-    <button (click)="insertSyntax('h1')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Heading 1">
+  <!-- Mobile Tab Switcher -->
+  <div class="md:hidden flex border-b border-slate-800 bg-slate-900">
+    <button 
+      (click)="setActiveMobileTab('editor')" 
+      class="flex-1 py-3 text-sm font-medium text-center transition-colors relative"
+      [class.text-blue-400]="activeMobileTab() === 'editor'"
+      [class.text-slate-400]="activeMobileTab() !== 'editor'"
+    >
+      Write
+      @if (activeMobileTab() === 'editor') {
+        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"></div>
+      }
+    </button>
+    <button 
+      (click)="setActiveMobileTab('preview')" 
+      class="flex-1 py-3 text-sm font-medium text-center transition-colors relative"
+      [class.text-purple-400]="activeMobileTab() === 'preview'"
+      [class.text-slate-400]="activeMobileTab() !== 'preview'"
+    >
+      Preview
+      @if (activeMobileTab() === 'preview') {
+        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-500"></div>
+      }
+    </button>
+  </div>
+
+  <!-- Toolbar (Visible on Desktop OR when Editor is active on Mobile) -->
+  <div 
+    class="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center gap-1 overflow-x-auto shrink-0 scrollbar-hide transition-all duration-300"
+    [class.hidden]="activeMobileTab() === 'preview' && (activeMobileTab() !== null) && 'md:flex'"
+    [class.flex]="activeMobileTab() === 'editor' || 'md:flex'"
+  >
+    <button (click)="insertSyntax('h1')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white shrink-0" title="Heading 1">
       <span class="font-bold text-xs">H1</span>
     </button>
-    <button (click)="insertSyntax('h2')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Heading 2">
+    <button (click)="insertSyntax('h2')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white shrink-0" title="Heading 2">
       <span class="font-bold text-xs">H2</span>
     </button>
-    <div class="w-px h-6 bg-slate-800 mx-1"></div>
-    <button (click)="insertSyntax('bold')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Bold">
+    <div class="w-px h-6 bg-slate-800 mx-1 shrink-0"></div>
+    <button (click)="insertSyntax('bold')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white shrink-0" title="Bold">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12a4 4 0 0 0 0-8H6v8"/><path d="M15 20a4 4 0 0 0 0-8H6v8Z"/></svg>
     </button>
-    <button (click)="insertSyntax('italic')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Italic">
+    <button (click)="insertSyntax('italic')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white shrink-0" title="Italic">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg>
     </button>
-    <div class="w-px h-6 bg-slate-800 mx-1"></div>
-    <button (click)="insertSyntax('list')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="List">
+    <div class="w-px h-6 bg-slate-800 mx-1 shrink-0"></div>
+    <button (click)="insertSyntax('list')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white shrink-0" title="List">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
     </button>
-    <button (click)="insertSyntax('code')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Inline Code">
+    <button (click)="insertSyntax('code')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white shrink-0" title="Inline Code">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
     </button>
-    <button (click)="insertSyntax('codeblock')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Code Block">
+    <button (click)="insertSyntax('codeblock')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white shrink-0" title="Code Block">
        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 10 2 2-2 2"/><path d="m15 14-2-2 2-2"/></svg>
     </button>
-    <button (click)="insertSyntax('link')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Link">
+    <button (click)="insertSyntax('link')" class="p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white shrink-0" title="Link">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
     </button>
   </div>
 
   <!-- Editor & Preview Grid -->
-  <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+  <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
     
     <!-- Editor Pane -->
-    <div class="flex-1 flex flex-col border-r border-slate-800 min-h-[50%] md:min-h-0 bg-slate-925">
-      <div class="bg-slate-900/30 px-4 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider flex justify-between items-center">
-        <span>Markdown Input</span>
-        <span class="text-xs text-slate-600">{{ rawMarkdown().length }} chars</span>
-      </div>
+    <div 
+      class="flex-col border-r border-slate-800 bg-slate-925 h-full md:flex md:flex-1 md:min-h-0 md:w-1/2"
+      [class.hidden]="activeMobileTab() !== 'editor'"
+      [class.flex]="activeMobileTab() === 'editor'"
+      [class.flex-1]="activeMobileTab() === 'editor'"
+    >
       <textarea 
         #editorTextarea
         [value]="rawMarkdown()"
         (input)="updateMarkdown($event)"
-        class="flex-1 w-full bg-slate-950 p-6 resize-none focus:outline-none font-mono text-sm leading-relaxed text-slate-300 placeholder-slate-600"
+        class="flex-1 w-full bg-slate-925 p-6 resize-none focus:outline-none font-mono text-sm leading-relaxed text-slate-300 placeholder-slate-600"
         placeholder="# Start typing your markdown here..."
         spellcheck="false"
       ></textarea>
+       <div class="bg-slate-900/30 px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider flex justify-between items-center border-t border-slate-800">
+        <span>Markdown Input</span>
+        <span class="text-xs text-slate-600">{{ rawMarkdown().length }} chars</span>
+      </div>
     </div>
 
     <!-- Preview Pane -->
-    <div class="flex-1 flex flex-col min-h-[50%] md:min-h-0 bg-slate-900">
-       <div class="bg-slate-900/30 px-4 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-800 md:border-t-0 border-t">
-        <span>Preview</span>
-      </div>
-      <div class="flex-1 overflow-y-auto p-8 bg-slate-900">
+    <div 
+      class="flex-col bg-slate-900 h-full md:flex md:flex-1 md:min-h-0 md:w-1/2"
+      [class.hidden]="activeMobileTab() !== 'preview'"
+      [class.flex]="activeMobileTab() === 'preview'"
+      [class.flex-1]="activeMobileTab() === 'preview'"
+    >
+      <div class="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-900">
         <div class="markdown-preview max-w-3xl mx-auto" [innerHTML]="sanitizedHtml()"></div>
+      </div>
+       <div class="bg-slate-900/30 px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider border-t border-slate-800 md:border-t flex justify-between items-center">
+        <span>Preview</span>
       </div>
     </div>
 
