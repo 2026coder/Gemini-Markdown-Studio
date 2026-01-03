@@ -8,7 +8,17 @@ export class AiService {
   private ai: GoogleGenAI;
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env['API_KEY'] });
+    // Safely access process.env to prevent "ReferenceError: process is not defined" in browser
+    let apiKey = '';
+    try {
+      if (typeof process !== 'undefined' && process.env) {
+        apiKey = process.env['API_KEY'] || '';
+      }
+    } catch (e) {
+      console.warn('Failed to read API_KEY from process.env');
+    }
+    
+    this.ai = new GoogleGenAI({ apiKey });
   }
 
   async enhanceMarkdown(text: string, mode: 'grammar' | 'expand' | 'summarize'): Promise<string> {
