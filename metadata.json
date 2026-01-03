@@ -1,0 +1,5 @@
+{
+  "name": "Gemini Markdown Studio",
+  "description": "A split-pane Markdown editor with real-time preview and AI-powered text enhancement using Google Gemini.",
+  "requestFramePermissions": []
+}
